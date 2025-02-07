@@ -354,7 +354,7 @@ class PlaceholderAttribute extends Attribute<bool> {
 
 class HeaderAttribute extends Attribute<int?> {
   const HeaderAttribute({int? level})
-      : super('header', AttributeScope.block, level);
+      : super('header', AttributeScope.inline, level);
 }
 
 class IndentAttribute extends Attribute<int?> {

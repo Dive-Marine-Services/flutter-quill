@@ -1,10 +1,10 @@
 name: example
 description: A demo for the Flutter Quill
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.5 <4.0.0'
+  sdk: ">=3.1.5 <4.0.0"
 dependencies:
   flutter:
     sdk: flutter
@@ -75,7 +75,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
-  
+
   fonts:
     - family: monospace
       fonts:
@@ -88,7 +88,7 @@ flutter:
         - asset: assets/fonts/SansSerif.ttf
     - family: ibarra-real-nova
       fonts:
-          - asset: assets/fonts/IbarraRealNova-Regular.ttf
+        - asset: assets/fonts/IbarraRealNova-Regular.ttf
     - family: square-peg
       fonts:
         - asset: assets/fonts/SquarePeg-Regular.ttf
