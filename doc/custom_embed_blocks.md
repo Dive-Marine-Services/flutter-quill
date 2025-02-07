@@ -1,4 +1,4 @@
-# 📦 Custom Embed Blocks
+# Custom Embed Blocks
 
 Sometimes you want to add some custom content inside your text, custom widgets inside them.
 An example is adding
@@ -41,9 +41,13 @@ class NotesEmbedBuilder extends EmbedBuilder {
   @override
   Widget build(
     BuildContext context,
-    EmbedContext embedContext,
+    QuillController controller,
+    Embed node,
+    bool readOnly,
+    bool inline,
+    TextStyle textStyle,
   ) {
-    final notes = NotesBlockEmbed(embedContext.node.value.data).document;
+    final notes = NotesBlockEmbed(node.value.data).document;
 
     return Material(
       color: Colors.transparent,
@@ -74,7 +78,7 @@ the `CustomBlockEmbed` inside of a `BlockEmbed.custom`).
 ```dart
 Future<void> _addEditNote(BuildContext context, {Document? document}) async {
   final isEditing = document != null;
-  final controller = QuillController(
+  final quillEditorController = QuillController(
     document: document ?? Document(),
     selection: const TextSelection.collapsed(offset: 0),
   );
@@ -94,16 +98,16 @@ Future<void> _addEditNote(BuildContext context, {Document? document}) async {
         ],
       ),
       content: QuillEditor.basic(
-        controller: controller,
-        config: const QuillEditorConfig(),
+        controller: quillEditorController,
+        configurations: const QuillEditorConfigurations(),
       ),
     ),
   );
 
-  if (controller.document.isEmpty()) return;
+  if (quillEditorController.document.isEmpty()) return;
 
   final block = BlockEmbed.custom(
-    NotesBlockEmbed.fromDocument(controller.document),
+    NotesBlockEmbed.fromDocument(quillEditorController.document),
   );
   final controller = _controller!;
   final index = controller.selection.baseOffset;

@@ -5,21 +5,22 @@ import '../../common/utils/widgets.dart';
 import '../../document/attribute.dart';
 import '../../l10n/extensions/localizations_ext.dart';
 import '../base_button/base_value_button.dart';
-import '../simple_toolbar.dart';
+import '../base_toolbar.dart';
+import '../simple_toolbar_provider.dart';
 
 class QuillToolbarFontSizeButton extends QuillToolbarBaseButton<
     QuillToolbarFontSizeButtonOptions, QuillToolbarFontSizeButtonExtraOptions> {
   QuillToolbarFontSizeButton({
     required super.controller,
+    @Deprecated('Please use the default display text from the options')
+    this.defaultDisplayText,
     super.options = const QuillToolbarFontSizeButtonOptions(),
-
-    /// Shares common options between all buttons, prefer the [options]
-    /// over the [baseOptions].
-    super.baseOptions,
     super.key,
-  })  : assert(options.items?.isNotEmpty ?? true),
+  })  : assert(options.rawItemsMap?.isNotEmpty ?? true),
         assert(options.initialValue == null ||
             (options.initialValue?.isNotEmpty ?? true));
+
+  final String? defaultDisplayText;
 
   @override
   QuillToolbarFontSizeButtonState createState() =>
@@ -33,8 +34,9 @@ class QuillToolbarFontSizeButtonState extends QuillToolbarBaseButtonState<
     String> {
   final _menuController = MenuController();
 
-  Map<String, String> get _items {
-    final fontSizes = options.items ??
+  Map<String, String> get rawItemsMap {
+    final fontSizes = options.rawItemsMap ??
+        context.quillSimpleToolbarConfigurations?.fontSizesValues ??
         {
           context.loc.small: 'small',
           context.loc.large: 'large',
@@ -57,6 +59,7 @@ class QuillToolbarFontSizeButtonState extends QuillToolbarBaseButtonState<
   String get _defaultDisplayText {
     return options.initialValue ??
         widget.options.defaultDisplayText ??
+        widget.defaultDisplayText ??
         context.loc.fontSize;
   }
 
@@ -70,7 +73,7 @@ class QuillToolbarFontSizeButtonState extends QuillToolbarBaseButtonState<
   }
 
   String? _getKeyName(dynamic value) {
-    for (final entry in _items.entries) {
+    for (final entry in rawItemsMap.entries) {
       if (getFontSize(entry.value) == getFontSize(value)) {
         return entry.key;
       }
@@ -95,7 +98,9 @@ class QuillToolbarFontSizeButtonState extends QuillToolbarBaseButtonState<
 
   @override
   Widget build(BuildContext context) {
-    final childBuilder = this.childBuilder;
+    final baseButtonConfigurations = context.quillToolbarBaseButtonOptions;
+    final childBuilder =
+        options.childBuilder ?? baseButtonConfigurations?.childBuilder;
     if (childBuilder != null) {
       return childBuilder(
         options,
@@ -110,7 +115,7 @@ class QuillToolbarFontSizeButtonState extends QuillToolbarBaseButtonState<
     }
     return MenuAnchor(
       controller: _menuController,
-      menuChildren: _items.entries.map((fontSize) {
+      menuChildren: rawItemsMap.entries.map((fontSize) {
         return MenuItemButton(
           key: ValueKey(fontSize.key),
           onPressed: () {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/internal.dart';
+import 'package:flutter_quill/flutter_quill_internal.dart';
+import 'package:flutter_quill/translations.dart';
 
 import 'camera_types.dart';
 
@@ -46,7 +47,8 @@ Future<CameraAction?> showSelectCameraActionDialog({
     showDragHandle: true,
     context: context,
     constraints: const BoxConstraints(maxWidth: 640),
-    builder: (context) => const SelectCameraActionDialog(),
+    builder: (context) => const FlutterQuillLocalizationsWidget(
+        child: SelectCameraActionDialog()),
   );
   return imageSource;
 }

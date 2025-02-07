@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Hungarian (`hu`).
 class FlutterQuillLocalizationsHu extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsHu([super.locale = 'hu']);
+  FlutterQuillLocalizationsHu([String locale = 'hu']) : super(locale);
 
   @override
   String get pasteLink => 'Link beillesztése';
@@ -240,7 +242,7 @@ class FlutterQuillLocalizationsHu extends FlutterQuillLocalizations {
 
   @override
   String get pleaseEnterTheLinkURL =>
-      "Kérjük, írja be a link URL-t (pl. 'https://example.com')";
+      'Kérjük, írja be a link URL-t (pl. \'https://example.com\')';
 
   @override
   String get pleaseEnterAValidImageURL =>
@@ -304,33 +306,4 @@ class FlutterQuillLocalizationsHu extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'Táblázat beszúrása';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

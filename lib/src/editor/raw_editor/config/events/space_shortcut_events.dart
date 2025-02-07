@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import '../../../../controller/quill_controller.dart';
 import '../../../../document/nodes/leaf.dart';
@@ -7,8 +8,7 @@ typedef SpaceShortcutEventHandler = bool Function(
 
 /// Defines the implementation of shortcut events for space key calls.
 @immutable
-@experimental
-class SpaceShortcutEvent {
+class SpaceShortcutEvent extends Equatable {
   SpaceShortcutEvent({
     required this.character,
     required this.handler,
@@ -37,14 +37,5 @@ class SpaceShortcutEvent {
       'SpaceShortcutEvent(character: $character, handler: $handler)';
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SpaceShortcutEvent &&
-        other.character == character &&
-        other.handler == handler;
-  }
-
-  @override
-  int get hashCode => character.hashCode ^ handler.hashCode;
+  List<Object?> get props => [character, handler];
 }

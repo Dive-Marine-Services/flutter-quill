@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Thai (`th`).
 class FlutterQuillLocalizationsTh extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsTh([super.locale = 'th']);
+  FlutterQuillLocalizationsTh([String locale = 'th']) : super(locale);
 
   @override
   String get pasteLink => 'วางลิงก์';
@@ -236,11 +238,11 @@ class FlutterQuillLocalizationsTh extends FlutterQuillLocalizations {
 
   @override
   String get pleaseEnterTextForYourLink =>
-      "กรุณาใส่ข้อความสำหรับลิงก์ของคุณ (เช่น 'เรียนรู้เพิ่มเติม')";
+      'กรุณาใส่ข้อความสำหรับลิงก์ของคุณ (เช่น \'เรียนรู้เพิ่มเติม\')';
 
   @override
   String get pleaseEnterTheLinkURL =>
-      "กรุณาใส่ URL ของลิงก์ (เช่น 'https://example.com')";
+      'กรุณาใส่ URL ของลิงก์ (เช่น \'https://example.com\')';
 
   @override
   String get pleaseEnterAValidImageURL => 'กรุณาใส่ URL รูปภาพที่ถูกต้อง';
@@ -299,33 +301,4 @@ class FlutterQuillLocalizationsTh extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'แทรกตาราง';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

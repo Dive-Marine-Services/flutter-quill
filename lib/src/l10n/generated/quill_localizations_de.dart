@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for German (`de`).
 class FlutterQuillLocalizationsDe extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsDe([super.locale = 'de']);
+  FlutterQuillLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
   String get pasteLink => 'Link hinzufügen';
@@ -235,10 +237,10 @@ class FlutterQuillLocalizationsDe extends FlutterQuillLocalizations {
   String get errorWhileSavingImage => 'Fehler beim Speichern des Bildes';
 
   @override
-  String get pleaseEnterTextForYourLink => "z.B. 'Mehr erfahren'";
+  String get pleaseEnterTextForYourLink => 'z.B. \'Mehr erfahren\'';
 
   @override
-  String get pleaseEnterTheLinkURL => "z.B. 'https://example.com'";
+  String get pleaseEnterTheLinkURL => 'z.B. \'https://example.com\'';
 
   @override
   String get pleaseEnterAValidImageURL =>
@@ -303,33 +305,4 @@ class FlutterQuillLocalizationsDe extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'Tabelle einfügen';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

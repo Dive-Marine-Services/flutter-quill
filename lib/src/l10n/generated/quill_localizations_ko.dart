@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Korean (`ko`).
 class FlutterQuillLocalizationsKo extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsKo([super.locale = 'ko']);
+  FlutterQuillLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
   String get pasteLink => '링크를 붙여 넣어 주세요';
@@ -238,7 +240,7 @@ class FlutterQuillLocalizationsKo extends FlutterQuillLocalizations {
   String get pleaseEnterTextForYourLink => '링크 제목 입력';
 
   @override
-  String get pleaseEnterTheLinkURL => "예시) 'https://example.com'";
+  String get pleaseEnterTheLinkURL => '예시) \'https://example.com\'';
 
   @override
   String get pleaseEnterAValidImageURL => '유효한 이미지 URL을 입력하세요';
@@ -296,33 +298,4 @@ class FlutterQuillLocalizationsKo extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => '테이블 삽입';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

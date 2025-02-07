@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart' as color_picker
+import 'package:flutter_colorpicker/flutter_colorpicker.dart'
     show ColorPicker, MaterialPicker, colorToHex;
 
+import '../../../../translations.dart';
 import '../../../document/style.dart';
-import '../../../editor_toolbar_shared/color.dart';
-import '../../../l10n/extensions/localizations_ext.dart';
+import 'color_button.dart' show hexToColor;
 
 enum _PickerType {
   material,
@@ -39,13 +39,12 @@ class ColorPickerDialogState extends State<ColorPickerDialog> {
   @override
   void initState() {
     super.initState();
+    hexController = TextEditingController(text: colorToHex(selectedColor));
     if (widget.isToggledColor) {
       selectedColor = widget.isBackground
           ? hexToColor(widget.selectionStyle.attributes['background']?.value)
           : hexToColor(widget.selectionStyle.attributes['color']?.value);
     }
-    hexController =
-        TextEditingController(text: color_picker.colorToHex(selectedColor));
   }
 
   @override
@@ -96,7 +95,7 @@ class ColorPickerDialogState extends State<ColorPickerDialog> {
             Column(
               children: [
                 if (pickerType == _PickerType.material)
-                  color_picker.MaterialPicker(
+                  MaterialPicker(
                     pickerColor: selectedColor,
                     onColorChanged: (color) {
                       widget.onRequestChangeColor(context, color);
@@ -104,7 +103,7 @@ class ColorPickerDialogState extends State<ColorPickerDialog> {
                     },
                   ),
                 if (pickerType == _PickerType.color)
-                  color_picker.ColorPicker(
+                  ColorPicker(
                     pickerColor: selectedColor,
                     onColorChanged: (color) {
                       widget.onRequestChangeColor(context, color);

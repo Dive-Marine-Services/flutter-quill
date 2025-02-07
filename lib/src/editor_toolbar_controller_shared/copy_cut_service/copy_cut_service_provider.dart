@@ -1,10 +1,10 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart' show immutable;
 import 'copy_cut_service.dart';
 import 'default_copy_cut_service.dart';
 
 @immutable
-@experimental
-abstract final class CopyCutServiceProvider {
+class CopyCutServiceProvider {
+  const CopyCutServiceProvider._();
   static CopyCutService _instance = DefaultCopyCutService();
 
   static CopyCutService get instance => _instance;

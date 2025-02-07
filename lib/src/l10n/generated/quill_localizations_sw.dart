@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Swahili (`sw`).
 class FlutterQuillLocalizationsSw extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsSw([super.locale = 'sw']);
+  FlutterQuillLocalizationsSw([String locale = 'sw']) : super(locale);
 
   @override
   String get pasteLink => 'Bandika Kiungo';
@@ -235,10 +237,10 @@ class FlutterQuillLocalizationsSw extends FlutterQuillLocalizations {
   String get errorWhileSavingImage => 'Hitilafu Wakati wa Kuhifadhi Picha';
 
   @override
-  String get pleaseEnterTextForYourLink => "Kwa mfano, 'Jifunze zaidi'";
+  String get pleaseEnterTextForYourLink => 'Kwa mfano, \'Jifunze zaidi\'';
 
   @override
-  String get pleaseEnterTheLinkURL => "Kwa mfano, 'https://example.com'";
+  String get pleaseEnterTheLinkURL => 'Kwa mfano, \'https://example.com\'';
 
   @override
   String get pleaseEnterAValidImageURL =>
@@ -301,33 +303,4 @@ class FlutterQuillLocalizationsSw extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'Ingiza jedwali';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

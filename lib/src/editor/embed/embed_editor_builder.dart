@@ -1,9 +1,8 @@
 import 'package:flutter/widgets.dart';
 
+import '../../controller/quill_controller.dart';
 import '../../document/nodes/leaf.dart' as leaf;
-import 'embed_context.dart';
-
-export './embed_context.dart';
+import '../../document/nodes/leaf.dart';
 
 abstract class EmbedBuilder {
   const EmbedBuilder();
@@ -15,12 +14,16 @@ abstract class EmbedBuilder {
     return WidgetSpan(child: widget);
   }
 
-  String toPlainText(leaf.Embed node) => leaf.Embed.kObjectReplacementCharacter;
+  String toPlainText(Embed node) => Embed.kObjectReplacementCharacter;
 
   Widget build(
     BuildContext context,
-    EmbedContext embedContext,
+    QuillController controller,
+    leaf.Embed node,
+    bool readOnly,
+    bool inline,
+    TextStyle textStyle,
   );
 }
 
-typedef EmbedsBuilder = EmbedBuilder Function(leaf.Embed node);
+typedef EmbedsBuilder = EmbedBuilder Function(Embed node);

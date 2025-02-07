@@ -150,25 +150,23 @@ class QuillTextLink {
 Future<LinkMenuAction> _showCupertinoLinkMenu(
     BuildContext context, String link) async {
   final result = await showCupertinoModalPopup<LinkMenuAction>(
-    // Set useRootNavigator to false to fix https://github.com/singerdmx/flutter-quill/issues/1170
-    useRootNavigator: false,
     context: context,
     builder: (ctx) {
       return CupertinoActionSheet(
         title: Text(link),
         actions: [
           _CupertinoAction(
-            title: context.loc.open,
+            title: 'Open',
             icon: Icons.language_sharp,
             onPressed: () => Navigator.of(context).pop(LinkMenuAction.launch),
           ),
           _CupertinoAction(
-            title: context.loc.copy,
+            title: 'Copy',
             icon: Icons.copy_sharp,
             onPressed: () => Navigator.of(context).pop(LinkMenuAction.copy),
           ),
           _CupertinoAction(
-            title: context.loc.remove,
+            title: 'Remove',
             icon: Icons.link_off_sharp,
             onPressed: () => Navigator.of(context).pop(LinkMenuAction.remove),
           ),
@@ -209,7 +207,7 @@ class _CupertinoAction extends StatelessWidget {
             Icon(
               icon,
               size: theme.iconTheme.size,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+              color: theme.colorScheme.onSurface.withOpacity(0.75),
             )
           ],
         ),
@@ -267,7 +265,7 @@ class _MaterialAction extends StatelessWidget {
       leading: Icon(
         icon,
         size: theme.iconTheme.size,
-        color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+        color: theme.colorScheme.onSurface.withOpacity(0.75),
       ),
       title: Text(title),
       onTap: onPressed,

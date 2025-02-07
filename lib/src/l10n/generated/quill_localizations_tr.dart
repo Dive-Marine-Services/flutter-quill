@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Turkish (`tr`).
 class FlutterQuillLocalizationsTr extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsTr([super.locale = 'tr']);
+  FlutterQuillLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
   String get pasteLink => 'Bağlantıyı Yapıştır';
@@ -235,17 +237,17 @@ class FlutterQuillLocalizationsTr extends FlutterQuillLocalizations {
   String get errorWhileSavingImage => 'Error while saving image';
 
   @override
-  String get pleaseEnterTextForYourLink => "e.g., 'Learn more'";
+  String get pleaseEnterTextForYourLink => 'e.g., \'Learn more\'';
 
   @override
-  String get pleaseEnterTheLinkURL => "e.g., 'https://example.com'";
+  String get pleaseEnterTheLinkURL => 'e.g., \'https://example.com\'';
 
   @override
   String get pleaseEnterAValidImageURL => 'Please enter a valid image URL';
 
   @override
   String get pleaseEnterAValidVideoURL =>
-      "Lütfen geçerli bir video URL'si girin";
+      'Lütfen geçerli bir video URL\'si girin';
 
   @override
   String get photo => 'Fotoğraf';
@@ -300,33 +302,4 @@ class FlutterQuillLocalizationsTr extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'Tablo ekle';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

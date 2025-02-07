@@ -42,33 +42,50 @@ Check out our [Youtube Playlist] or [Code Introduction](./doc/code_introduction.
 to take a detailed walkthrough of the code base.
 You can join our [Slack Group] for discussion.
 
-<p>
-  <img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/screenshot_1.png?raw=true"
-    alt="A screenshot of the iOS example app" height="400"/>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/screenshot_4.png?raw=true"
-   alt="A screenshot of the web example app" height="420" />
-</p>
+> [!NOTE]
+> If you are viewing this page from [pub.dev](https://pub.dev/) page, then you
+> might experience some issues with opening some links or
+> unsupported [GitHub alerts](https://github.com/orgs/community/discussions/16925)
 
 ## 📚 Table of contents
 
+- [📸 Screenshots](#-screenshots)
 - [📦 Installation](#-installation)
-- [🛠 Platform Setup](#-platform-setup)
+- [🛠 Platform Specific Configurations](#-platform-specific-configurations)
 - [🚀 Usage](#-usage)
+- [💥 Breaking Changes](#-breaking-changes)
 - [🔤 Input / Output](#-input--output)
 - [⚙️ Configurations](#️-configurations)
 - [📦 Embed Blocks](#-embed-blocks)
-- [🔄 Delta Conversion](#-delta-conversion)
+- [🔄 Conversion to HTML](#-conversion-to-html)
+- [📝 Spelling checker](#-spelling-checker)
 - [📝 Rich Text Paste](#-rich-text-paste)
+- [✂️ Shortcut events](#-shortcut-events)
 - [🌐 Translation](#-translation)
 - [🧪 Testing](#-testing)
 - [🤝 Contributing](#-contributing)
 - [📜 Acknowledgments](#-acknowledgments)
 
+
+## 📸 Screenshots
+
+<details>
+<summary>Tap to show/hide screenshots</summary>
+
+<br>
+
+<img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/screenshot_1.png?raw=true" width="250" alt="Screenshot 1">
+<img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/screenshot_2.png?raw=true" width="250" alt="Screenshot 2">
+<img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/screenshot_3.png?raw=true" width="250" alt="Screenshot 3">
+<img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/screenshot_4.png?raw=true" width="250" alt="Screenshot 4">
+
+</details>
+
 ## 📦 Installation
 
-```shell
-flutter pub add flutter_quill
+```yaml
+dependencies:
+  flutter_quill: ^<latest-version-here>
 ```
 
 <p align="center">OR</p>
@@ -82,9 +99,13 @@ dependencies:
 ```
 
 > [!TIP]
-> If you're using version `10.0.0`, see [the migration guide to migrate to `11.0.0`](https://github.com/singerdmx/flutter-quill/blob/master/doc/migration/10_to_11.md).
+> Using the latest version and reporting any issues you encounter on GitHub will greatly contribute to the improvement
+> of the library.
+> Your input and insights are valuable in shaping a stable and reliable version for all the developers. Thank you for
+> being part of the open-source community!
+>
 
-## 🛠 Platform Setup
+## 🛠 Platform Specific Configurations
 
 The `flutter_quill` package uses the following plugins:
 
@@ -105,7 +126,7 @@ If not set up, a warning will appear in the log during debug mode only.
 
 **1. Update `AndroidManifest.xml`**
 
-Open `android/app/src/main/AndroidManifest.xml` and add the following inside the `<application>` tag:
+Open `your_project/android/app/src/main/AndroidManifest.xml` and add the following inside the `<application>` tag:
 
 ```xml
 <manifest>
@@ -127,7 +148,7 @@ Open `android/app/src/main/AndroidManifest.xml` and add the following inside the
 
 **2. Create `file_paths.xml`**
 
-Create the file `android/app/src/main/res/xml/file_paths.xml` with the following content:
+Create the file `your_project/android/app/src/main/res/xml/file_paths.xml` with the following content:
 
 ```xml
 <paths>
@@ -137,26 +158,10 @@ Create the file `android/app/src/main/res/xml/file_paths.xml` with the following
 
 > [!NOTE]
 > Starting with Flutter Quill `10.8.4`, [super_clipboard](https://pub.dev/packages/super_clipboard) is no longer required in `flutter_quill` or `flutter_quill_extensions`.
-> The new default is an internal plugin [`quill_native_bridge`](https://pub.dev/packages/quill_native_bridge).
+> The new default is an internal plugin, [`quill_native_bridge`](https://pub.dev/packages/quill_native_bridge).
 > If you want to continue using `super_clipboard`, you can use the [quill_super_clipboard](https://pub.dev/packages/quill_super_clipboard) package (support may be discontinued).
 
 ## 🚀 Usage
-
-Add the localization delegate to your app widget:
-
-```dart
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
-MaterialApp(
-  localizationsDelegates: const [
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    FlutterQuillLocalizations.delegate,
-  ]，
-);
-```
 
 Instantiate a controller:
 
@@ -164,18 +169,18 @@ Instantiate a controller:
 QuillController _controller = QuillController.basic();
 ```
 
-Use the `QuillEditor` and `QuillSimpleToolbar` widgets,
+Use the `QuillEditor`, and `QuillSimpleToolbar` widgets,
 and attach the `QuillController` to them:
 
 ```dart
 QuillSimpleToolbar(
   controller: _controller,
-  config: const QuillSimpleToolbarConfig(),
+  configurations: const QuillSimpleToolbarConfigurations(),
 ),
 Expanded(
   child: QuillEditor.basic(
     controller: _controller,
-    config: const QuillEditorConfig(),
+    configurations: const QuillEditorConfigurations(),
   ),
 )
 ```
@@ -192,39 +197,61 @@ void dispose() {
 
 Check out [Sample Page] for more advanced usage.
 
+## 💥 Breaking Changes
+
+- APIs marked with [`@experimental`](https://api.flutter.dev/flutter/meta/experimental-constant.html) 
+are subject to change or removal at any time and should be used with caution, 
+as they may be altered even in minor versions.
+
+- APIs marked with [`@internal`](https://api.flutter.dev/flutter/meta/internal-constant.html)
+and [`@visibleForTesting`](https://api.flutter.dev/flutter/meta/visibleForTesting-constant.html) are not intended for
+public use and should be avoided entirely.
+
+- The `package:flutter_quill/flutter_quill_internal.dart` expose internal APIs
+to be used by other related packages and should be avoided when possible.
+
+We make every effort to ensure internal APIs are not exported by default. Use experimental features at your own discretion.
+
+We recommend checking the `CHANGELOG.md` or release notes for each update to stay informed.
+
 ## 🔤 Input / Output
 
-This library utilizes [Quill Delta](https://quilljs.com/docs/delta/) to represent document content.
-The Delta format is a compact and versatile method for describing document changes through a series of operations that denote insertions, deletions, or formatting changes.
+This library uses [Quill Delta](https://quilljs.com/docs/delta/)
+to represent the document content.
+The Delta format is a compact and versatile way to describe document changes.
+It consists of a series of operations, each representing an insertion, deletion,
+or formatting change within the document.
+
+> [!NOTE]
+> Don’t be confused by its name Delta—Deltas represents both documents and changes to documents.
+> If you think of Deltas as the instructions for going from one document to another,
+> the way Deltas represents a document is by expressing the instructions starting from an empty document.
 
 * Use `_controller.document.toDelta()` to extract the deltas.
 * Use `_controller.document.toPlainText()` to extract plain text.
 
-**To save the document**:
+To save a document as a JSON:
 
 ```dart
-final String json = jsonEncode(_controller.document.toDelta().toJson());
-// Stores the JSON Quill Delta
+final json = jsonEncode(_controller.document.toDelta().toJson());
 ```
 
-**To load the document**:
+To open the editor with an existing JSON representation that you've previously stored:
 
 ```dart
-final String json = ...; // Load the previously stored JSON Quill Delta
+final json = jsonDecode(r'{"insert":"hello\n"}');
 
-_controller.document = Document.fromJson(jsonDecode(json));
-```
-
-**To change the read-only mode**:
-
-```dart
-_controller.readOnly = true; // Or false to allow edit
+_controller.document = Document.fromJson(json);
 ```
 
 ### 🔗 Links
 
-- [🪶 Quill Delta](https://quilljs.com/docs/delta/)
-- [📜 Quill Delta Formats](https://quilljs.com/docs/formats)
+- [Quill Delta](https://quilljs.com/docs/delta/)
+- [Quill Delta Formats](https://quilljs.com/docs/formats)
+- [Why Quill](https://quilljs.com/guides/why-quill/)
+- [Quill JS Configurations](https://quilljs.com/docs/configuration/)
+- [Quill JS Interactive Playground](https://quilljs.com/playground/)
+- [Quill JS GitHub repo](https://github.com/quilljs/quill)
 
 ## ⚙️ Configurations
 
@@ -233,18 +260,16 @@ The `QuillSimpleToolbar` and `QuillEditor` widgets are both customizable.
 
 ### 🔗 Links
 
-- [🛠️ Using Custom App Widget](./doc/configurations/using_custom_app_widget.md)
-- [🌍 Localizations Setup](./doc/configurations/localizations_setup.md)
-- [🔠 Font Size](./doc/configurations/font_size.md)
-- [🖋 Font Family](#-font-family)
-- [🔘 Custom Toolbar buttons](./doc/configurations/custom_buttons.md)
-- [🔍 Search](./doc/configurations/search.md)
-- [✂️ Shortcut events](./doc/customizing_shortcuts.md)
-- [🎨 Custom Toolbar](./doc/custom_toolbar.md)
+- [Using Custom App Widget](./doc/configurations/using_custom_app_widget.md)
+- [Localizations Setup](./doc/configurations/localizations_setup.md)
+- [Font Size](./doc/configurations/font_size.md)
+- [Font Family](#font-family)
+- [Custom Toolbar buttons](./doc/configurations/custom_buttons.md)
+- [Search](./doc/configurations/search.md)
 
 ### 🖋 Font Family
 
-To use your own fonts, update your [Assets](./example/assets/fonts) directory and pass in `items` to `QuillToolbarFontFamilyButton`'s options.
+To use your own fonts, update your [Assets](./example/assets/fonts) folder and pass in `fontFamilyValues`.
 More details
 on [this commit](https://github.com/singerdmx/flutter-quill/commit/71d06f6b7be1b7b6dba2ea48e09fed0d7ff8bbaa),
 [this article](https://stackoverflow.com/questions/55075834/fontfamily-property-not-working-properly-in-flutter)
@@ -254,37 +279,51 @@ and [this](https://www.flutterbeads.com/change-font-family-flutter/).
 
 The `flutter_quill` package provides an interface for all the users to provide their own implementations for embed
 blocks.
-
-Refer to the [Custom Embed Blocks](./doc/custom_embed_blocks.md) for more details.
+Implementations for image, video, and
+formula embed blocks are proved in a separate
+package [`flutter_quill_extensions`](https://pub.dev/packages/flutter_quill_extensions).
 
 ### 🛠️ Using the embed blocks from `flutter_quill_extensions`
 
-The [`flutter_quill_extensions`][FlutterQuill Extensions]
-package provide implementations for image and video embed blocks.
+To see how to use the extension package, please take a look at the [README](./flutter_quill_extensions/README.md)
+of [FlutterQuill Extensions]
 
-## 🔄 Delta Conversion
+### 🔗 Links
+
+- [Custom Embed Blocks](./doc/custom_embed_blocks.md)
+- [Custom Toolbar](./doc/custom_toolbar.md)
+
+## 🔄 Conversion to HTML
 
 > [!CAUTION]
-> Storing the **Delta** as **HTML** in the database to convert it back to **Delta** when
-> loading the document is not recommended due to the structural and functional differences between HTML and Delta ([see this comment](https://github.com/slab/quill/issues/1551#issuecomment-311458570)).
-> We recommend storing the **Document** as **Delta JSON**
-> instead of other formats (e.g., HTML, Markdown, PDF, Microsoft Word, Google Docs, Apple Pages, XML).
+> **Converting HTML or Markdown to Delta is highly experimental and shouldn't be used for production applications**,
+> while the current implementation we have internally is far from perfect, it could improved however **it will likely
+not
+work as expected**, due to differences between **HTML** and **Delta**, see
+> this [Quill JS Comment #311458570](https://github.com/slab/quill/issues/1551#issuecomment-311458570) for more
+> info.<br>
+> We only use it **internally** as it is more suitable for our specific use case, copying content from external websites
+> and pasting it into the editor
+> previously breaks the styles, while the current implementation is not designed for converting a **full Document** from
+> other formats to **Delta**, it provides a better user experience and doesn't have many downsides.
+>
+> The support for converting HTML to **Quill Delta** is quite experimental and used internally when
+> pasting HTML content from the clipboard to the Quill Document.
 >
 > Converting **Delta** from/to **HTML** is not a standard feature in [Quill JS](https://github.com/slab/quill)
-> or [Flutter Quill][FlutterQuill].
+> or [FlutterQuill].
 
-Available Packages for Conversion
-
-| Package | Description |
-| ------- | ----------- |
-| [`vsc_quill_delta_to_html`](https://pub.dev/packages/vsc_quill_delta_to_html) | Converts **Delta** to **HTML**. |
-| [`flutter_quill_delta_from_html`](https://pub.dev/packages/flutter_quill_delta_from_html) | Converts **HTML** to **Delta**. |
-| [`flutter_quill_to_pdf`](https://pub.dev/packages/flutter_quill_to_pdf) | Converts **Delta** to **PDF**. |
-| [`markdown_quill`](https://pub.dev/packages/markdown_quill) | Converts **Markdown** to **Delta** and vice versa. |
-| [`flutter_quill_delta_easy_parser`](https://pub.dev/packages/flutter_quill_delta_easy_parser) | Converts Quill **Delta** into a simplified document format, making it easier to manage and manipulate text attributes. |
-
-> [!TIP]
-> You might want to convert between **HTML** and **Delta** for some use cases:
+> [!IMPORTANT]
+> Converting **HTML** to **Delta** usually won't work as expected, we highly recommend storing the **Document** as *
+*Delta JSON**
+> in the database instead of other formats (e.g., HTML, Markdown, PDF, Microsoft Word, Google Docs, Apple Pages, XML,
+> CSV,
+> etc...)
+>
+> Converting between **HTML** and **Delta** JSON is generally not recommended due to their structural and functional
+> differences.
+>
+> Sometimes you might want to convert between **HTML** and **Delta** for specific use cases:
 >
 > 1. **Migration**: If you're using an existing system that stores the data in HTML and want to convert the document
      data to **Delta**.
@@ -293,33 +332,51 @@ Available Packages for Conversion
 > 4. **Rich text pasting**: If you copy some content from websites or apps, and want to paste it into the app.
 > 5. **SEO**: In case you want to use HTML for SEO support.
 
+The following packages can be used:
+
+1. [`vsc_quill_delta_to_html`](https://pub.dev/packages/vsc_quill_delta_to_html): To convert **Delta**
+   to **HTML**.
+2. [`flutter_quill_delta_from_html`](https://pub.dev/packages/flutter_quill_delta_from_html): To convert **HTML** to **Delta**.
+3. [`flutter_quill_to_pdf`](https://pub.dev/packages/flutter_quill_to_pdf): To convert **Delta** To **PDF**.
+4. [`markdown_quill`](https://pub.dev/packages/markdown_quill): To convert **Markdown** To **Delta** and vice versa.
+
+## 📝 Spelling checker
+
+This feature is currently not implemented and is being planned. Refer to [#2246](https://github.com/singerdmx/flutter-quill/issues/2246)
+for discussion.
+
 ## 📝 Rich Text Paste
 
 This feature allows the user to paste the content copied from other apps into the editor as rich text.
 The plugin [`quill_native_bridge`](https://pub.dev/packages/quill_native_bridge) provides access to the system Clipboard.
 
-<p>
-  <img src="https://github.com/singerdmx/flutter-quill/blob/master/example/assets/images/rich_text_paste.gif?raw=true"
-    alt="An animated image of the rich text paste on macOS" width="600" />
-</p>
-
 > [!IMPORTANT]
-> Currently this feature is unsupported on the web.
+> Currently this feature is not supported on the web.
 > See [issue #1998](https://github.com/singerdmx/flutter-quill/issues/1998) and [issue #2220](https://github.com/singerdmx/flutter-quill/issues/2220)
- for more details.
+ for more details
+
+## ✂️ Shortcut events
+
+We can customize some Shorcut events, using the parameters `characterShortcutEvents` or `spaceShortcutEvents` from `QuillEditorConfigurations` to add more functionality to our editor. 
+
+> [!NOTE]
+>
+> You can get all standard shortcuts using `standardCharactersShortcutEvents` or `standardSpaceShorcutEvents` 
+
+To see an example of this, you can check [customizing_shortcuts](./doc/customizing_shortcuts.md)
 
 ## 🌐 Translation
 
-The package offers translations for the toolbar and editor widgets, it will follow the system locale unless you set your
+The package offers translations for the quill toolbar and editor, it will follow the system locale unless you set your
 own locale.
 
-See the [translation](./doc/translation.md) page for more info.
+Open this [page](./doc/translation.md) for more info
 
 ## 🧪 Testing
 
 Take a look at [flutter_quill_test](https://pub.dev/packages/flutter_quill_test) for testing.
 
-Currently, the support for testing is limited.
+Notice that currently, the support for testing is limited.
 
 ## 🤝 Contributing
 
@@ -371,4 +428,4 @@ See [Contributing](./CONTRIBUTING.md) for more details.
 
 [Slack Group]: https://join.slack.com/t/bulletjournal1024/shared_invite/zt-fys7t9hi-ITVU5PGDen1rNRyCjdcQ2g
 
-[Sample Page]: https://github.com/singerdmx/flutter-quill/blob/master/example/lib/main.dart
+[Sample Page]: https://github.com/singerdmx/flutter-quill/blob/master/example/lib/screens/quill/quill_screen.dart

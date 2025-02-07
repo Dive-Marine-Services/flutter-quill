@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart'
     show CupertinoActionSheet, CupertinoActionSheetAction;
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/material.dart' show Slider, Card;
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
-import 'package:flutter_quill/internal.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_quill/translations.dart';
 
 class ImageResizer extends StatefulWidget {
   const ImageResizer({
@@ -37,10 +39,21 @@ class ImageResizerState extends State<ImageResizer> {
 
   @override
   Widget build(BuildContext context) {
-    if (Theme.of(context).isCupertino) {
-      return _showCupertinoMenu();
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+        return _showCupertinoMenu();
+      case TargetPlatform.android:
+        return _showMaterialMenu();
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return _showMaterialMenu();
+      default:
+        throw UnsupportedError(
+          'Not supposed to be invoked for $defaultTargetPlatform',
+        );
     }
-    return _showMaterialMenu();
   }
 
   Widget _showMaterialMenu() {
@@ -75,7 +88,7 @@ class ImageResizerState extends State<ImageResizer> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Card(
-        child: Slider.adaptive(
+        child: Slider(
           value: isWidth ? _width : _height,
           max: isWidth ? widget.maxWidth : widget.maxHeight,
           divisions: 1000,

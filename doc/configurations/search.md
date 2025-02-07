@@ -7,13 +7,13 @@ Use the 3 vertical dots icon to turn on case-sensitivity or whole word constrain
 ## Search configuration options
 
 By default, the content of Embed objects are not searched.
-You can enable search by setting the [searchEmbedMode] in `searchConfig`:
+You can enable search by setting the [searchEmbedMode] in searchConfigurations:
 
 ```dart
-    QuillEditor.basic(
+    MyQuillEditor(
       controller: _controller,
-      config: QuillEditorConfig(
-        searchConfig: const QuillSearchConfig(
+      configurations: QuillEditorConfigurations(
+        searchConfigurations: const QuillSearchConfigurations(
           searchEmbedMode: SearchEmbedMode.plainText,
         ),
       ),

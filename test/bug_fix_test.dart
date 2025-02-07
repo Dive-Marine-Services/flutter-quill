@@ -17,12 +17,10 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            localizationsDelegates:
-                FlutterQuillLocalizations.localizationsDelegates,
             home: Scaffold(
               body: QuillSimpleToolbar(
                 controller: controller,
-                config: const QuillSimpleToolbarConfig(
+                configurations: const QuillSimpleToolbarConfigurations(
                   showRedo: false,
                   customButtons: [
                     QuillToolbarCustomButtonOptions(
@@ -43,7 +41,7 @@ void main() {
         expect(builtinFinder, findsOneWidget);
 
         final customFinder = find.descendant(
-            of: find.byType(QuillSimpleToolbar),
+            of: find.byType(QuillToolbar),
             matching: find.byWidgetPredicate((widget) =>
                 widget is QuillToolbarIconButton && widget.tooltip == tooltip),
             matchRoot: true);
@@ -116,7 +114,7 @@ void main() {
         controller.formatSelection(Attribute.unchecked);
         editor.focusNode.unfocus();
         await tester.pump();
-        await tester.tap(find.byType(QuillCheckboxPoint));
+        await tester.tap(find.byType(QuillEditorCheckboxPoint));
         expect(tester.takeException(), isNull);
       });
     });
@@ -143,7 +141,7 @@ void main() {
               focusNode: FocusNode(),
               scrollController: ScrollController(),
               controller: controller,
-              config: const QuillEditorConfig(
+              configurations: const QuillEditorConfigurations(
                 autoFocus: true,
                 expands: true,
               ),

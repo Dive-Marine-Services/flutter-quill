@@ -3,19 +3,14 @@ import 'package:flutter/material.dart';
 import '../../document/attribute.dart';
 import '../../l10n/extensions/localizations_ext.dart';
 import '../base_button/stateless_base_button.dart';
-import '../config/buttons/clear_format_options.dart';
-import 'quill_icon_button.dart';
+import '../base_toolbar.dart';
 
-class QuillToolbarClearFormatButton extends QuillToolbarBaseButtonStateless {
+class QuillToolbarClearFormatButton extends QuillToolbarBaseButton {
   const QuillToolbarClearFormatButton({
     required super.controller,
-    QuillToolbarClearFormatButtonOptions? options,
-
-    /// Shares common options between all buttons, prefer the [options]
-    /// over the [baseOptions].
-    super.baseOptions,
+    super.options,
     super.key,
-  }) : super(options: options);
+  });
 
   void _sharedOnPressed() {
     final attributes = <Attribute>{};

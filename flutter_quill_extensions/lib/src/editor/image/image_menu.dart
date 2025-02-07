@@ -1,51 +1,42 @@
+import 'dart:async' show Completer;
+import 'dart:ui' as ui;
+
 import 'package:flutter/cupertino.dart' show showCupertinoModalPopup;
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, Uint8List;
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart'
     show ImageUrl, QuillController, StyleAttribute, getEmbedNode;
-import 'package:flutter_quill/internal.dart';
-import 'package:path/path.dart' as p;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_quill/flutter_quill_internal.dart';
+import 'package:flutter_quill/translations.dart';
 
 import '../../common/utils/element_utils/element_utils.dart';
 import '../../common/utils/string.dart';
-import 'config/image_config.dart';
-import 'image_load_utils.dart';
-import 'image_save_utils.dart';
+import '../../common/utils/utils.dart';
+import '../../editor_toolbar_shared/image_saver/s_image_saver.dart';
+import '../../editor_toolbar_shared/shared_configurations.dart';
+import 'models/image_configurations.dart';
 import 'widgets/image.dart' show ImageTapWrapper, getImageStyleString;
 import 'widgets/image_resizer.dart' show ImageResizer;
 
 class ImageOptionsMenu extends StatelessWidget {
   const ImageOptionsMenu({
     required this.controller,
-    required this.config,
+    required this.configurations,
     required this.imageSource,
     required this.imageSize,
-    required this.readOnly,
+    required this.isReadOnly,
+    required this.imageSaverService,
     required this.imageProvider,
-    this.prefersGallerySave = true,
     super.key,
   });
 
   final QuillController controller;
-  final QuillEditorImageEmbedConfig config;
+  final QuillEditorImageEmbedConfigurations configurations;
   final String imageSource;
   final ElementSize imageSize;
-  final bool readOnly;
+  final bool isReadOnly;
+  final ImageSaverService imageSaverService;
   final ImageProvider imageProvider;
-
-  // TODO(quill_native_bridge): Update this doc comment once saveImageToGallery()
-  //  is supported on Windows too (will be applicable like macOS). See https://pub.dev/packages/quill_native_bridge#-features
-  /// Determines if the image should be saved to the gallery instead of using the
-  /// system file save dialog for platforms that support both.
-  ///
-  /// Currently, the only platform where this applies is macOS.
-  ///
-  /// This is silently ignored on platforms that only support gallery save (Android and iOS)
-  /// or only image save.
-  ///
-  /// For more details, refer to [quill_native_bridge Saving images](https://pub.dev/packages/quill_native_bridge#-saving-images).
-  final bool prefersGallerySave;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +46,7 @@ class ImageOptionsMenu extends StatelessWidget {
       child: SimpleDialog(
         title: Text(context.loc.image),
         children: [
-          if (!readOnly)
+          if (!isReadOnly)
             ListTile(
               title: Text(context.loc.resize),
               leading: const Icon(Icons.settings_outlined),
@@ -65,30 +56,32 @@ class ImageOptionsMenu extends StatelessWidget {
                   context: context,
                   builder: (modalContext) {
                     final screenSize = MediaQuery.sizeOf(modalContext);
-                    return ImageResizer(
-                      onImageResize: (width, height) {
-                        final res = getEmbedNode(
-                          controller,
-                          controller.selection.start,
-                        );
-
-                        final attr = replaceStyleStringWithSize(
-                          getImageStyleString(controller),
-                          width: width,
-                          height: height,
-                        );
-                        controller
-                          ..skipRequestKeyboard = true
-                          ..formatText(
-                            res.offset,
-                            1,
-                            StyleAttribute(attr),
+                    return FlutterQuillLocalizationsWidget(
+                      child: ImageResizer(
+                        onImageResize: (width, height) {
+                          final res = getEmbedNode(
+                            controller,
+                            controller.selection.start,
                           );
-                      },
-                      imageWidth: imageSize.width,
-                      imageHeight: imageSize.height,
-                      maxWidth: screenSize.width,
-                      maxHeight: screenSize.height,
+
+                          final attr = replaceStyleStringWithSize(
+                            getImageStyleString(controller),
+                            width: width,
+                            height: height,
+                          );
+                          controller
+                            ..skipRequestKeyboard = true
+                            ..formatText(
+                              res.offset,
+                              1,
+                              StyleAttribute(attr),
+                            );
+                        },
+                        imageWidth: imageSize.width,
+                        imageHeight: imageSize.height,
+                        maxWidth: screenSize.width,
+                        maxHeight: screenSize.height,
+                      ),
                     );
                   },
                 );
@@ -104,15 +97,13 @@ class ImageOptionsMenu extends StatelessWidget {
                 getImageStyleString(controller),
               );
 
-              final imageBytes = await ImageLoader.instance
-                  .loadImageBytesFromImageProvider(
-                      imageProvider: imageProvider);
+              final imageBytes = await _loadImageBytesFromImageProvider();
               if (imageBytes != null) {
                 await ClipboardServiceProvider.instance.copyImage(imageBytes);
               }
             },
           ),
-          if (!readOnly)
+          if (!isReadOnly)
             ListTile(
               leading: Icon(
                 Icons.delete_forever_outlined,
@@ -123,7 +114,8 @@ class ImageOptionsMenu extends StatelessWidget {
                 Navigator.of(context).pop();
 
                 // Call the remove check callback if set
-                if (await config.shouldRemoveImageCallback?.call(imageSource) ==
+                if (await configurations.shouldRemoveImageCallback
+                        ?.call(imageSource) ==
                     false) {
                   return;
                 }
@@ -139,93 +131,52 @@ class ImageOptionsMenu extends StatelessWidget {
                   TextSelection.collapsed(offset: offset),
                 );
                 // Call the post remove callback if set
-                await config.onImageRemovedCallback.call(imageSource);
+                await configurations.onImageRemovedCallback.call(imageSource);
               },
             ),
-          ListTile(
-            leading: const Icon(Icons.save),
-            title: Text(context.loc.save),
-            onTap: () async {
-              final messenger = ScaffoldMessenger.of(context);
-              final localizations = context.loc;
-              Navigator.of(context).pop();
+          if (!kIsWeb)
+            ListTile(
+              leading: const Icon(Icons.save),
+              title: Text(context.loc.save),
+              onTap: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final localizations = context.loc;
+                Navigator.of(context).pop();
 
-              SaveImageResult? result;
-              try {
-                result = await ImageSaver.instance.saveImage(
+                final saveImageResult = await saveImage(
                   imageUrl: imageSource,
-                  imageProvider: imageProvider,
-                  prefersGallerySave: prefersGallerySave,
+                  imageSaverService: imageSaverService,
                 );
-              } on GalleryImageSaveAccessDeniedException {
-                messenger.showSnackBar(SnackBar(
-                    content: Text(
-                  localizations.saveImagePermissionDenied,
-                )));
-                return;
-              }
+                final imageSavedSuccessfully = saveImageResult.error == null;
 
-              if (result == null) {
-                messenger.showSnackBar(SnackBar(
-                    content: Text(
-                  localizations.errorUnexpectedSavingImage,
-                )));
-                return;
-              }
+                messenger.clearSnackBars();
 
-              if (kIsWeb) {
-                messenger.showSnackBar(SnackBar(
-                    content: Text(localizations.successImageDownloaded)));
-                return;
-              }
-
-              if (result.isGallerySave) {
-                messenger.showSnackBar(SnackBar(
-                  content: Text(localizations.successImageSavedGallery),
-                  action: SnackBarAction(
-                    label: localizations.openGallery,
-                    onPressed: () =>
-                        QuillNativeProvider.instance.openGalleryApp(),
-                  ),
-                ));
-                return;
-              }
-
-              if (isDesktopApp) {
-                final imageFilePath = result.imageFilePath;
-                if (imageFilePath == null) {
-                  // User canceled the system save dialog.
+                if (!imageSavedSuccessfully) {
+                  messenger.showSnackBar(SnackBar(
+                      content: Text(
+                    localizations.errorWhileSavingImage,
+                  )));
                   return;
+                }
+
+                var message = switch (saveImageResult.method) {
+                  SaveImageResultMethod.network =>
+                    localizations.savedUsingTheNetwork,
+                  SaveImageResultMethod.localStorage =>
+                    localizations.savedUsingLocalStorage,
+                };
+
+                if (isDesktopApp) {
+                  message = localizations.theImageHasBeenSavedAt(imageSource);
                 }
 
                 messenger.showSnackBar(
                   SnackBar(
-                    content: Text(localizations.successImageSaved),
-                    // On macOS the app only has access to the picked file from the system save
-                    // dialog and not the directory where it was saved.
-                    // Opening the directory of that file requires entitlements on macOS
-                    // See https://pub.dev/packages/url_launcher#macos-file-access-configuration
-                    // Open the saved image file instead of the directory
-                    action: defaultTargetPlatform == TargetPlatform.macOS
-                        ? SnackBarAction(
-                            label: localizations.openFile,
-                            onPressed: () => launchUrl(Uri.file(imageFilePath)),
-                          )
-                        : SnackBarAction(
-                            label: localizations.openFileLocation,
-                            onPressed: () => launchUrl(
-                                Uri.directory(p.dirname(imageFilePath))),
-                          ),
+                    content: Text(message),
                   ),
                 );
-
-                return;
-              }
-
-              throw StateError(
-                  'Image save result is not handled on $defaultTargetPlatform');
-            },
-          ),
+              },
+            ),
           ListTile(
             leading: const Icon(Icons.zoom_in),
             title: Text(context.loc.zoom),
@@ -233,8 +184,11 @@ class ImageOptionsMenu extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (_) => ImageTapWrapper(
+                  assetsPrefix:
+                      QuillSharedExtensionsConfigurations.get(context: context)
+                          .assetsPrefix,
                   imageUrl: imageSource,
-                  config: config,
+                  configurations: configurations,
                 ),
               ),
             ),
@@ -242,5 +196,24 @@ class ImageOptionsMenu extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // TODO: This will load the image again, in case it was network image
+  //  then it will send a GET request each time to load the image.
+  Future<Uint8List?> _loadImageBytesFromImageProvider() async {
+    final stream = imageProvider.resolve(ImageConfiguration.empty);
+    final completer = Completer<ui.Image>();
+
+    ImageStreamListener? listener;
+    listener = ImageStreamListener((info, _) {
+      completer.complete(info.image);
+      stream.removeListener(listener!);
+    });
+
+    stream.addListener(listener);
+
+    final image = await completer.future;
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return byteData?.buffer.asUint8List();
   }
 }

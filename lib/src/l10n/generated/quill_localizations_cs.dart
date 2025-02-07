@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Czech (`cs`).
 class FlutterQuillLocalizationsCs extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsCs([super.locale = 'cs']);
+  FlutterQuillLocalizationsCs([String locale = 'cs']) : super(locale);
 
   @override
   String get pasteLink => 'Vložit odkaz';
@@ -236,11 +238,11 @@ class FlutterQuillLocalizationsCs extends FlutterQuillLocalizations {
 
   @override
   String get pleaseEnterTextForYourLink =>
-      "Zadejte text pro váš odkaz (např., 'Dozvědět se více')";
+      'Zadejte text pro váš odkaz (např., \'Dozvědět se více\')';
 
   @override
   String get pleaseEnterTheLinkURL =>
-      "Zadejte URL odkazu (např., 'https://example.com')";
+      'Zadejte URL odkazu (např., \'https://example.com\')';
 
   @override
   String get pleaseEnterAValidImageURL => 'Zadejte platnou URL adresu obrázku';
@@ -299,33 +301,4 @@ class FlutterQuillLocalizationsCs extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'Vložit tabulku';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }

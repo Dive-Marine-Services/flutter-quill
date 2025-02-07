@@ -91,8 +91,8 @@ class HighlightAttr extends Attribute<bool?> {
 
 ##### Where should we add this `HighlightAttr`?
 
-On `QuillEditor` or `QuillEditorConfig` **doesn't exist** a param that let us pass our `Attribute`
-implementations. To make this more easy, we can use just `customStyleBuilder` param from `QuillEditorConfig`,
+On `QuillEditor` or `QuillEditorConfigurations` **doesn't exist** a param that let us pass our `Attribute`
+implementations. To make this more easy, we can use just `customStyleBuilder` param from `QuillEditorConfigurations`,
 that let us define a function to return a `TextStyle`. With this, we can define now our `HighlightAttr`
 
 ##### The editor
@@ -100,7 +100,7 @@ that let us define a function to return a `TextStyle`. With this, we can define 
 ```dart
 QuillEditor.basic(
       controller: controller,
-      config: QuillEditorConfig(
+      configurations: QuillEditorConfigurations(
         customStyleBuilder: (Attribute<dynamic> attribute) {
           if (attribute.key.equals(highlightKey)) {
             return TextStyle(color: Colors.black, backgroundColor: Colors.yellow);

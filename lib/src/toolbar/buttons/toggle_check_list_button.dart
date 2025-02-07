@@ -5,8 +5,7 @@ import '../../document/attribute.dart';
 import '../../document/style.dart';
 import '../../l10n/extensions/localizations_ext.dart';
 import '../base_button/base_value_button.dart';
-import '../config/buttons/toggle_check_list_options.dart';
-import 'toggle_style_button.dart';
+import '../base_toolbar.dart';
 
 class QuillToolbarToggleCheckListButton extends QuillToolbarBaseButton<
     QuillToolbarToggleCheckListButtonOptions,
@@ -14,10 +13,6 @@ class QuillToolbarToggleCheckListButton extends QuillToolbarBaseButton<
   const QuillToolbarToggleCheckListButton({
     required super.controller,
     super.options = const QuillToolbarToggleCheckListButtonOptions(),
-
-    /// Shares common options between all buttons, prefer the [options]
-    /// over the [baseOptions].
-    super.baseOptions,
     super.key,
   });
 
@@ -62,7 +57,8 @@ class QuillToolbarToggleCheckListButtonState
 
   @override
   Widget build(BuildContext context) {
-    final childBuilder = this.childBuilder;
+    final childBuilder =
+        options.childBuilder ?? baseButtonExtraOptions?.childBuilder;
     if (childBuilder != null) {
       return childBuilder(
         options,
@@ -95,7 +91,7 @@ class QuillToolbarToggleCheckListButtonState
 
   void _toggleAttribute() {
     controller
-      ..skipRequestKeyboard = !options.shouldRequestKeyboard
+      ..skipRequestKeyboard = !options.isShouldRequestKeyboard
       ..formatSelection(
         currentValue
             ? Attribute.clone(Attribute.unchecked, null)

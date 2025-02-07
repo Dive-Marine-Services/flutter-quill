@@ -1,8 +1,10 @@
 import 'quill_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for English (`en`).
 class FlutterQuillLocalizationsEn extends FlutterQuillLocalizations {
-  FlutterQuillLocalizationsEn([super.locale = 'en']);
+  FlutterQuillLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
   String get pasteLink => 'Paste a link';
@@ -236,11 +238,11 @@ class FlutterQuillLocalizationsEn extends FlutterQuillLocalizations {
 
   @override
   String get pleaseEnterTextForYourLink =>
-      "Please enter a text for your link (e.g., 'Learn more')";
+      'Please enter a text for your link (e.g., \'Learn more\')';
 
   @override
   String get pleaseEnterTheLinkURL =>
-      "Please enter the link URL (e.g., 'https://example.com')";
+      'Please enter the link URL (e.g., \'https://example.com\')';
 
   @override
   String get pleaseEnterAValidImageURL => 'Please enter a valid image URL';
@@ -299,35 +301,6 @@ class FlutterQuillLocalizationsEn extends FlutterQuillLocalizations {
 
   @override
   String get insertTable => 'Insert table';
-
-  @override
-  String get insertVideo => 'Insert video';
-
-  @override
-  String get errorUnexpectedSavingImage =>
-      'An unexpected error occurred while saving the image. Please try again.';
-
-  @override
-  String get successImageSavedGallery => 'Image saved to your gallery.';
-
-  @override
-  String get successImageSaved => 'Image saved successfully.';
-
-  @override
-  String get successImageDownloaded => 'Image downloaded successfully.';
-
-  @override
-  String get openGallery => 'Open Gallery';
-
-  @override
-  String get openFileLocation => 'Open File Location';
-
-  @override
-  String get openFile => 'Open File';
-
-  @override
-  String get saveImagePermissionDenied =>
-      'Couldn’t save the image due to missing permission';
 }
 
 /// The translations for English, as used in the United States (`en_US`).
@@ -566,11 +539,11 @@ class FlutterQuillLocalizationsEnUs extends FlutterQuillLocalizationsEn {
 
   @override
   String get pleaseEnterTextForYourLink =>
-      "Please enter a text for your link (e.g., 'Learn more')";
+      'Please enter a text for your link (e.g., \'Learn more\')';
 
   @override
   String get pleaseEnterTheLinkURL =>
-      "Please enter the link URL (e.g., 'https://example.com')";
+      'Please enter the link URL (e.g., \'https://example.com\')';
 
   @override
   String get pleaseEnterAValidImageURL => 'Please enter a valid image URL';

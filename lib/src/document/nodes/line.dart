@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
 
 import '../../../../quill_delta.dart';
 import '../../common/structs/offset_value.dart';
+import '../../editor/config/editor_configurations.dart';
 import '../../editor/embed/embed_editor_builder.dart';
 import '../../editor_toolbar_controller_shared/copy_cut_service/copy_cut_service_provider.dart';
 import '../attribute.dart';
@@ -531,27 +531,17 @@ base class Line extends QuillContainer<Leaf?> {
   }
 
   /// Returns plain text within the specified text range.
-  String getPlainText(
-    int offset,
-    int len, {
-    @internal Iterable<EmbedBuilder>? embedBuilders,
-    @internal EmbedBuilder? unknownEmbedBuilder,
-  }) {
+  String getPlainText(int offset, int len,
+      [QuillEditorConfigurations? config]) {
     final plainText = StringBuffer();
-    _getPlainText(offset, len, plainText,
-        embedBuilders: embedBuilders, unknownEmbedBuilder: unknownEmbedBuilder);
+    _getPlainText(offset, len, plainText, config);
     return plainText.toString();
   }
 
-  int _getNodeText(
-    Leaf node,
-    StringBuffer buffer,
-    int offset,
-    int remaining, {
-    Iterable<EmbedBuilder>? embedBuilders,
-    EmbedBuilder? unknownEmbedBuilder,
-  }) {
-    final text = node.toPlainText(embedBuilders, unknownEmbedBuilder);
+  int _getNodeText(Leaf node, StringBuffer buffer, int offset, int remaining,
+      QuillEditorConfigurations? config) {
+    final text =
+        node.toPlainText(config?.embedBuilders, config?.unknownEmbedBuilder);
     if (text == Embed.kObjectReplacementCharacter) {
       final embed = node.value as Embeddable;
       final provider = CopyCutServiceProvider.instance;
@@ -572,7 +562,7 @@ base class Line extends QuillContainer<Leaf?> {
     }
 
     /// Text for clipboard will expand the content of Embed nodes
-    if (node is Embed) {
+    if (node is Embed && config != null) {
       buffer.write(text);
       return remaining - 1;
     }
@@ -582,13 +572,8 @@ base class Line extends QuillContainer<Leaf?> {
     return remaining - (end - offset);
   }
 
-  int _getPlainText(
-    int offset,
-    int len,
-    StringBuffer plainText, {
-    Iterable<EmbedBuilder>? embedBuilders,
-    EmbedBuilder? unknownEmbedBuilder,
-  }) {
+  int _getPlainText(int offset, int len, StringBuffer plainText,
+      QuillEditorConfigurations? config) {
     var len0 = len;
     final data = queryChild(offset, false);
     var node = data.node as Leaf?;
@@ -599,25 +584,12 @@ base class Line extends QuillContainer<Leaf?> {
         plainText.write('\n');
         len0 -= 1;
       } else {
-        len0 = _getNodeText(
-          node,
-          plainText,
-          offset - node.offset,
-          len0,
-          embedBuilders: embedBuilders,
-          unknownEmbedBuilder: unknownEmbedBuilder,
-        );
+        len0 =
+            _getNodeText(node, plainText, offset - node.offset, len0, config);
 
         while (!node!.isLast && len0 > 0) {
           node = node.next as Leaf;
-          len0 = _getNodeText(
-            node,
-            plainText,
-            0,
-            len0,
-            embedBuilders: embedBuilders,
-            unknownEmbedBuilder: unknownEmbedBuilder,
-          );
+          len0 = _getNodeText(node, plainText, 0, len0, config);
         }
 
         if (len0 > 0) {
@@ -628,13 +600,7 @@ base class Line extends QuillContainer<Leaf?> {
       }
 
       if (len0 > 0 && nextLine != null) {
-        len0 = nextLine!._getPlainText(
-          0,
-          len0,
-          plainText,
-          embedBuilders: embedBuilders,
-          unknownEmbedBuilder: unknownEmbedBuilder,
-        );
+        len0 = nextLine!._getPlainText(0, len0, plainText, config);
       }
     }
 

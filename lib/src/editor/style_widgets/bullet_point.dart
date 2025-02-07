@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
 
-class QuillBulletPoint extends StatelessWidget {
-  const QuillBulletPoint({
+import '../provider.dart';
+
+class QuillEditorBulletPoint extends StatelessWidget {
+  const QuillEditorBulletPoint({
     required this.style,
     required this.width,
     this.padding = 0,
@@ -23,11 +25,13 @@ class QuillBulletPoint extends StatelessWidget {
       width: width,
       padding: EdgeInsetsDirectional.only(end: padding),
       color: backgroundColor,
-      child: Text(
-        '•',
-        style: style,
-        textAlign: textAlign,
-      ),
+      child: context.quillEditorConfigurations?.elementOptions.unorderedList
+              .customWidget ??
+          Text(
+            '•',
+            style: style,
+            textAlign: textAlign,
+          ),
     );
   }
 }

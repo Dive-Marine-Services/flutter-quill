@@ -13,7 +13,9 @@ typedef LeadingBlockIndentWidth = HorizontalSpacing Function(
 typedef LeadingBlockNumberPointWidth = double Function(
     double fontSize, int count);
 
-abstract final class TextBlockUtils {
+class TextBlockUtils {
+  TextBlockUtils._();
+
   /// Get the horizontalSpacing using the default
   /// implementation provided by [Flutter Quill]
   static HorizontalSpacing defaultIndentWidthBuilder(

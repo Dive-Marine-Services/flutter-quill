@@ -1,14 +1,14 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../controller/quill_controller.dart' show QuillController;
+import '../../../../../flutter_quill.dart';
 
 typedef CharacterShortcutEventHandler = bool Function(
     QuillController controller);
 
 /// Defines the implementation of shortcut event based on character.
 @immutable
-@experimental
-class CharacterShortcutEvent {
+class CharacterShortcutEvent extends Equatable {
   const CharacterShortcutEvent({
     required this.key,
     required this.character,
@@ -41,15 +41,5 @@ class CharacterShortcutEvent {
       'CharacterShortcutEvent(key: $key, character: $character, handler: $handler)';
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is CharacterShortcutEvent &&
-        other.key == key &&
-        other.character == character &&
-        other.handler == handler;
-  }
-
-  @override
-  int get hashCode => key.hashCode ^ character.hashCode ^ handler.hashCode;
+  List<Object?> get props => [key, character, handler];
 }
