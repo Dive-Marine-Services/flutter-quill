@@ -148,8 +148,10 @@ class QuillController extends ChangeNotifier {
         selection: selection,
       );
 
-  /// True when the copied text is a header
-  bool isHeaderText = false;
+  /// True when the copied text is a H1, H2 or H3
+  bool isHeader1Text = false;
+  bool isHeader2Text = false;
+  bool isHeader3Text = false;
 
   /// Only attributes applied to all characters within this range are
   /// included in the result.
@@ -529,6 +531,9 @@ class QuillController extends ChangeNotifier {
   }
 
   bool clipboardSelection(bool copy) {
+    isHeader1Text = false;
+    isHeader2Text = false;
+    isHeader3Text = false;
     copiedImageUrl = null;
 
     /// Get the text for the selected region and expand the content of Embedded objects.
@@ -549,10 +554,12 @@ class QuillController extends ChangeNotifier {
     // Convert header delta to json string
     String headerDeltaString = jsonEncode(_headerDelta.toJson());
     // Check if it contains the header attribute string
-    if (headerDeltaString.contains('"attributes":{"header":1}') ||
-        headerDeltaString.contains('"attributes":{"header":2}') ||
-        headerDeltaString.contains('"attributes":{"header":3}')) {
-      isHeaderText = true;
+    if (headerDeltaString.contains('"attributes":{"header":1}')) {
+      isHeader1Text = true;
+    } else if (headerDeltaString.contains('"attributes":{"header":2}')) {
+      isHeader2Text = true;
+    } else if (headerDeltaString.contains('"attributes":{"header":3}')) {
+      isHeader3Text = true;
     }
 
     if (!selection.isCollapsed) {
@@ -610,13 +617,24 @@ class QuillController extends ChangeNotifier {
 
   @visibleForTesting
   bool pasteUsingPlainOrDelta(String? clipboardText) {
+    int selectionEnd = selection.end;
     if (clipboardText != null) {
       /// Internal copy-paste preserves styles and embeds
       if (clipboardText == _pastePlainText &&
           _pastePlainText.isNotEmpty &&
           _pasteDelta.isNotEmpty) {
-        replaceText(selection.start, selection.end - selection.start,
-            _pasteDelta, TextSelection.collapsed(offset: selection.end));
+        if (isHeader1Text) {
+          _pasteDelta.insert('\n', {'header': 1});
+          selectionEnd += 1;
+        } else if (isHeader2Text) {
+          _pasteDelta.insert('\n', {'header': 2});
+          selectionEnd += 1;
+        } else if (isHeader3Text) {
+          _pasteDelta.insert('\n', {'header': 3});
+          selectionEnd += 1;
+        }
+        replaceText(selection.start, selectionEnd - selection.start,
+            _pasteDelta, TextSelection.collapsed(offset: selectionEnd));
       } else {
         replaceText(
             selection.start,
