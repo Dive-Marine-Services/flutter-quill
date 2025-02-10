@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:convert';
 
 import 'package:flutter/services.dart' show ClipboardData, Clipboard;
 import 'package:flutter/widgets.dart';
@@ -146,6 +147,9 @@ class QuillController extends ChangeNotifier {
         text: document.toPlainText(),
         selection: selection,
       );
+
+  /// True when the copied text is a header
+  bool isHeaderText = false;
 
   /// Only attributes applied to all characters within this range are
   /// included in the result.
@@ -536,6 +540,20 @@ class QuillController extends ChangeNotifier {
 
     /// Get the deltas for the selection so they can be pasted into a QuillEditor with styles and embeds retained.
     _pasteDelta = document.toDelta().slice(selection.start, selection.end);
+
+    // Detect the next few characters and see if it contains a newline and header attribute
+    Delta _headerDelta =
+        document.toDelta().slice(selection.start, selection.end + 1);
+
+    /// Header Delta will include "insert⟨ ⏎ ⟩ + {header: 1}"
+    // Convert header delta to json string
+    String headerDeltaString = jsonEncode(_headerDelta.toJson());
+    // Check if it contains the header attribute string
+    if (headerDeltaString.contains('"attributes":{"header":1}') ||
+        headerDeltaString.contains('"attributes":{"header":2}') ||
+        headerDeltaString.contains('"attributes":{"header":3}')) {
+      isHeaderText = true;
+    }
 
     if (!selection.isCollapsed) {
       Clipboard.setData(ClipboardData(text: _pastePlainText));
