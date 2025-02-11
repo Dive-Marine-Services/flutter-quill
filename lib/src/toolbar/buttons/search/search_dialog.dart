@@ -49,6 +49,7 @@ class QuillToolbarSearchDialog extends StatefulWidget {
     this.text,
     this.childBuilder,
     this.searchBarAlignment,
+    this.onExit,
     super.key,
   });
 
@@ -57,6 +58,7 @@ class QuillToolbarSearchDialog extends StatefulWidget {
   final String? text;
   final QuillToolbarSearchDialogChildBuilder? childBuilder;
   final AlignmentGeometry? searchBarAlignment;
+  final VoidCallback? onExit;
 
   @override
   QuillToolbarSearchDialogState createState() =>
@@ -123,18 +125,11 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
     }
 
     final searchBar = Container(
+      width: MediaQuery.of(context).size.width * 0.26,
       height: addBottomPadding ? 50 : 45,
       padding: addBottomPadding ? const EdgeInsets.only(bottom: 12) : null,
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            tooltip: context.loc.close,
-            visualDensity: VisualDensity.compact,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.more_vert),
             isSelected: _caseSensitive || _wholeWord,
@@ -161,6 +156,7 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
               controller: _textController,
             ),
           ),
+          const VerticalDivider(),
           IconButton(
             icon: const Icon(Icons.keyboard_arrow_up),
             tooltip: context.loc.moveToPreviousOccurrence,
@@ -171,11 +167,21 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
             tooltip: context.loc.moveToNextOccurrence,
             onPressed: (_offsets.isNotEmpty) ? _moveToNext : null,
           ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: context.loc.close,
+            visualDensity: VisualDensity.compact,
+            onPressed: () {
+              // Navigator.of(context).pop();
+              widget.onExit!();
+            },
+          ),
         ],
       ),
     );
 
     final searchSettings = SizedBox(
+      width: MediaQuery.of(context).size.width * 0.26,
       height: 45,
       child: Row(
         children: [
@@ -221,27 +227,17 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
       ),
     );
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      backgroundColor: widget.dialogTheme?.dialogBackgroundColor,
-      alignment: searchBarAlignment,
-      insetPadding: EdgeInsets.zero,
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: FlutterQuillLocalizationsWidget(
-        child: Builder(
-          builder: (context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_searchSettingsUnfolded && searchBarAtBottom)
-                  searchSettings,
-                searchBar,
-                if (_searchSettingsUnfolded && !searchBarAtBottom)
-                  searchSettings,
-              ],
-            );
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_searchSettingsUnfolded && searchBarAtBottom) searchSettings,
+            searchBar,
+            if (_searchSettingsUnfolded && !searchBarAtBottom) searchSettings,
+          ],
         ),
       ),
     );
@@ -253,7 +249,7 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
       _searchTimer?.cancel();
     }
     _searchTimer = Timer(
-      const Duration(milliseconds: 300),
+      const Duration(milliseconds: 400),
       _findText,
     );
   }
