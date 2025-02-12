@@ -156,7 +156,10 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
               controller: _textController,
             ),
           ),
-          const VerticalDivider(),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(6, 5.6, 0, 5.6),
+            child: VerticalDivider(thickness: 1.1, color: Colors.grey),
+          ),
           IconButton(
             icon: const Icon(Icons.keyboard_arrow_up),
             tooltip: context.loc.moveToPreviousOccurrence,
@@ -228,7 +231,7 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
     );
 
     return Card(
-      elevation: 1.5,
+      elevation: 2.3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: FlutterQuillLocalizationsWidget(
         child: Column(

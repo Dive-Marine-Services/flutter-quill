@@ -146,11 +146,11 @@ Map<SingleActivator, Intent> defaultSinlgeActivatorIntents() {
       meta: _isDesktopMacOS,
     ): const QuillEditorInsertEmbedIntent(Attribute.image),
 
-    SingleActivator(
-      LogicalKeyboardKey.keyF,
-      control: !_isDesktopMacOS,
-      meta: _isDesktopMacOS,
-    ): const OpenSearchIntent(),
+    // SingleActivator(
+    //   LogicalKeyboardKey.keyF,
+    //   control: !_isDesktopMacOS,
+    //   meta: _isDesktopMacOS,
+    // ): const OpenSearchIntent(),
 
     //  Arrow key scrolling
     SingleActivator(
