@@ -74,17 +74,21 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
   bool _wholeWord = false;
   bool _searchSettingsUnfolded = false;
   Timer? _searchTimer;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _text = widget.text ?? '';
+    _focusNode = FocusNode();
+    _focusNode.requestFocus();
   }
 
   @override
   void dispose() {
     _textController.dispose();
     _searchTimer?.cancel();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -144,6 +148,7 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
           Expanded(
             child: TextField(
               style: widget.dialogTheme?.inputTextStyle,
+              focusNode: _focusNode,
               decoration: InputDecoration(
                 isDense: true,
                 suffixText: matchShown,
