@@ -734,4 +734,17 @@ class QuillController extends ChangeNotifier {
     }
     return sb.toString();
   }
+
+  void scrollToSection(String sectionHeader) {
+    final len = sectionHeader.length + 1;
+    final offset =
+        document.search(sectionHeader, caseSensitive: true, wholeWord: true)[0];
+    updateSelection(
+      TextSelection(
+        baseOffset: offset,
+        extentOffset: offset + len,
+      ),
+      ChangeSource.local,
+    );
+  }
 }

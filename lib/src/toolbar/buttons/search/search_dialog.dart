@@ -50,6 +50,7 @@ class QuillToolbarSearchDialog extends StatefulWidget {
     this.childBuilder,
     this.searchBarAlignment,
     this.onExit,
+    this.fromSectionHeaders,
     super.key,
   });
 
@@ -59,6 +60,7 @@ class QuillToolbarSearchDialog extends StatefulWidget {
   final QuillToolbarSearchDialogChildBuilder? childBuilder;
   final AlignmentGeometry? searchBarAlignment;
   final VoidCallback? onExit;
+  final bool? fromSectionHeaders;
 
   @override
   QuillToolbarSearchDialogState createState() =>
@@ -81,7 +83,11 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
     super.initState();
     _text = widget.text ?? '';
     _focusNode = FocusNode();
-    _focusNode.requestFocus();
+    if (widget.fromSectionHeaders != true) {
+      _focusNode.requestFocus();
+    } else {
+      _focusNode.unfocus();
+    }
   }
 
   @override
@@ -134,31 +140,42 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
       padding: addBottomPadding ? const EdgeInsets.only(bottom: 12) : null,
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            isSelected: _caseSensitive || _wholeWord,
-            tooltip: context.loc.searchSettings,
-            visualDensity: VisualDensity.compact,
-            onPressed: () {
-              setState(() {
-                _searchSettingsUnfolded = !_searchSettingsUnfolded;
-              });
-            },
-          ),
+          if (widget.fromSectionHeaders != true)
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              isSelected: _caseSensitive || _wholeWord,
+              tooltip: context.loc.searchSettings,
+              visualDensity: VisualDensity.compact,
+              onPressed: () {
+                setState(() {
+                  _searchSettingsUnfolded = !_searchSettingsUnfolded;
+                });
+              },
+            ),
           Expanded(
             child: TextField(
               style: widget.dialogTheme?.inputTextStyle,
               focusNode: _focusNode,
-              decoration: InputDecoration(
-                isDense: true,
-                suffixText: matchShown,
-                suffixStyle: widget.dialogTheme?.labelTextStyle,
-              ),
-              autofocus: true,
+              decoration: widget.fromSectionHeaders == true
+                  ? InputDecoration(
+                      isDense: true,
+                      suffixText: matchShown,
+                      suffixStyle: widget.dialogTheme?.labelTextStyle,
+                      hintText: 'Search...',
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                    )
+                  : InputDecoration(
+                      isDense: true,
+                      suffixText: matchShown,
+                      suffixStyle: widget.dialogTheme?.labelTextStyle,
+                    ),
+              autofocus: !(widget.fromSectionHeaders == true),
               onChanged: _textChanged,
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.text,
               controller: _textController,
+              onSubmitted: (value) => _moveToNext(),
             ),
           ),
           const Padding(
@@ -177,11 +194,16 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
           ),
           IconButton(
             icon: const Icon(Icons.close),
-            tooltip: context.loc.close,
+            tooltip:
+                widget.fromSectionHeaders == true ? 'Clear' : context.loc.close,
             visualDensity: VisualDensity.compact,
             onPressed: () {
               // Navigator.of(context).pop();
-              widget.onExit!();
+              if (widget.fromSectionHeaders == true) {
+                _textController.clear();
+              } else {
+                widget.onExit!();
+              }
             },
           ),
         ],
@@ -235,20 +257,31 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
       ),
     );
 
-    return Card(
-      elevation: 2.3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: FlutterQuillLocalizationsWidget(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_searchSettingsUnfolded && searchBarAtBottom) searchSettings,
-            searchBar,
-            if (_searchSettingsUnfolded && !searchBarAtBottom) searchSettings,
-          ],
-        ),
-      ),
-    );
+    return widget.fromSectionHeaders == true
+        ? Container(
+            decoration: BoxDecoration(
+              border: Border.all(),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: FlutterQuillLocalizationsWidget(child: searchBar),
+          )
+        : Card(
+            elevation: 2.3,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: FlutterQuillLocalizationsWidget(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_searchSettingsUnfolded && searchBarAtBottom)
+                    searchSettings,
+                  searchBar,
+                  if (_searchSettingsUnfolded && !searchBarAtBottom)
+                    searchSettings,
+                ],
+              ),
+            ),
+          );
   }
 
   void _textChanged(String text) {
@@ -291,6 +324,7 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
       _index = 0;
       if (_offsets.isEmpty) {
         clearSelection();
+        _focusNode.requestFocus();
       } else {
         //  Select the next hit position
         for (var n = 0; n < _offsets.length; n++) {
@@ -320,6 +354,7 @@ class QuillToolbarSearchDialogState extends State<QuillToolbarSearchDialog> {
       ),
       ChangeSource.local,
     );
+    _focusNode.requestFocus();
   }
 
   void _moveToPrevious() {
