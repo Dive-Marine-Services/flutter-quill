@@ -91,9 +91,9 @@ class _QuillToolbarSelectHeaderStyleDropdownButtonState
 
   String _label(Attribute<dynamic> value) {
     final label = switch (value) {
-      Attribute.h1 => 'Heading 1 (CTRL + 1)',
-      Attribute.h2 => 'Heading 2 (CTRL + 2)',
-      Attribute.h3 => 'Heading 3 (CTRL + 3)',
+      Attribute.h1 => 'Heading 1',
+      Attribute.h2 => 'Heading 2',
+      Attribute.h3 => 'Heading 3',
       Attribute.h4 => context.loc.heading4,
       Attribute.h5 => context.loc.heading5,
       Attribute.h6 => context.loc.heading6,
